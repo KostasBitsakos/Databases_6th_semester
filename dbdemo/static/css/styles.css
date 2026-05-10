@@ -265,3 +265,61 @@
       transform: translateX(-2px);
   }
 }
+
+
+/* Similarity page */
+.similarity-page {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.similarity-card {
+    border-radius: 24px;
+    background-color: rgba(18,49,126,0.23);
+}
+
+.similarity-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.similarity-table th:nth-child(1),
+.similarity-table td:nth-child(1) {
+    width: 8%;
+}
+
+.similarity-table th:nth-child(2),
+.similarity-table td:nth-child(2) {
+    width: 10%;
+}
+
+.similarity-table th:nth-child(3),
+.similarity-table td:nth-child(3) {
+    width: 12%;
+}
+
+.similarity-table th:nth-child(4),
+.similarity-table td:nth-child(4) {
+    width: 42%;
+}
+
+.similarity-table th:nth-child(5),
+.similarity-table td:nth-child(5) {
+    width: 8%;
+}
+
+.similarity-table th:nth-child(6),
+.similarity-table td:nth-child(6) {
+    width: 20%;
+}
+
+.review-cell {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.vector-cell {
+    white-space: normal;
+    word-break: break-word;
+    font-size: 0.85rem;
+}

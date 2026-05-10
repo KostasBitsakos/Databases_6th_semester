@@ -1,0 +1,37 @@
+services:
+  db:
+    image: mariadb:11.8
+    container_name: demo_mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_USER: demo_user
+      MARIADB_PASSWORD: demo_pass
+      MARIADB_ROOT_PASSWORD: root_pass_123
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db-project-demo.sql:/docker-entrypoint-initdb.d/01-db-project-demo.sql:ro
+      - ./zzz-grants.sql:/docker-entrypoint-initdb.d/02-zzz-grants.sql:ro
+
+  app:
+    build: .
+    container_name: demo_flask
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DB: demo
+      MYSQL_USER: demo_user
+      MYSQL_PASSWORD: demo_pass
+      SECRET_KEY: dev_secret_key
+      WTF_CSRF_SECRET_KEY: dev_csrf_secret_key
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    command: python run.py
+
+volumes:
+  db_data:

@@ -1,0 +1,70 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm" style="border-radius:20px;background:rgba(18,49,126,0.18);">
+                <div class="card-body">
+                    <h2>Similarity From Existing Review</h2>
+                    <p><a href="/reviews">Back to reviews</a></p>
+
+                    {% if source_review %}
+                    <h4>Source Review</h4>
+                    <ul>
+                        <li><strong>Player:</strong> {{ source_review[0] }} {{ source_review[1] }}</li>
+                        <li><strong>Manager:</strong> {{ source_review[2] }}</li>
+                        <li><strong>Review:</strong> {{ source_review[3] }}</li>
+                        <li><strong>Vector Preview:</strong> <code>{{ source_review[4] }}...</code></li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if results %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm" style="border-radius:20px;background:rgba(18,49,126,0.18);">
+                <div class="card-body">
+                    <h3>Top 5 Similar Reviews</h3>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Manager</th>
+                                    <th>Review</th>
+                                    <th>Distance</th>
+                                    <th>Vector Preview</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in results %}
+                                <tr>
+                                    <td>{{ row[0] }}</td>
+                                    <td>{{ row[1] }}</td>
+                                    <td>{{ row[2] }}</td>
+                                    <td>{{ row[3] }}</td>
+                                    <td style="white-space: normal; word-break: break-word;">{{ row[4] }}</td>
+                                    <td>{{ row[5] }}</td>
+                                    <td><code>{{ row[6] }}...</code></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="mt-3 mb-0">
+                        Lower cosine distance means higher similarity.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

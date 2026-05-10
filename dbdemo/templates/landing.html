@@ -29,6 +29,20 @@
         </div>
     </div>
 
+    <div class="row" id="row">
+        <div class="col-md-6">
+            <div class="card" id="card-container-layout">
+                <div class="card-body" id="card">
+                    <h4 class="card-title">Player Reviews</h4>
+                    <p class="card-text paragraph-custom">
+                        Show manager reviews for players and inspect the text data that will later be used for similarity search.
+                    </p>
+                    <a class="btn btn-primary btn-submit-custom" href="/reviews">Show</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row" id="row-2">
         <div class="col-md-6">
             <div class="card" id="card-container-layout">
@@ -47,5 +61,22 @@
             </div>
         </div>
     </div>
+
+
+    <div class="row" id="row">
+    <div class="col-md-6">
+        <div class="card" id="card-container-layout">
+            <div class="card-body" id="card">
+                <h4 class="card-title">Similarity Search</h4>
+                <p class="card-text paragraph-custom">
+                    Run a simple vector similarity search on player reviews using fixed scouting questions.
+                </p>
+                <a class="btn btn-primary btn-submit-custom" href="/similarity">Open</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </div>
 {% endblock content %}

@@ -1,0 +1,104 @@
+{% extends "global_layout.html" %}
+{% block content %}
+
+<div style="background:red;color:white;padding:10px;font-size:24px;">
+    NEW SIMILARITY TEMPLATE LOADED
+</div>
+
+<style>
+.sim-wrap {
+    width: 96vw;
+    max-width: 1700px;
+    margin: 30px auto;
+}
+.sim-card {
+    border-radius: 20px;
+    background: rgba(18,49,126,0.18);
+    padding: 20px;
+}
+.sim-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+.sim-table th, .sim-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    vertical-align: top;
+}
+.sim-table th:nth-child(1), .sim-table td:nth-child(1) { width: 8%; }
+.sim-table th:nth-child(2), .sim-table td:nth-child(2) { width: 10%; }
+.sim-table th:nth-child(3), .sim-table td:nth-child(3) { width: 12%; }
+.sim-table th:nth-child(4), .sim-table td:nth-child(4) { width: 42%; }
+.sim-table th:nth-child(5), .sim-table td:nth-child(5) { width: 8%; }
+.sim-table th:nth-child(6), .sim-table td:nth-child(6) { width: 20%; }
+.sim-review {
+    white-space: normal;
+    word-break: break-word;
+}
+.sim-vector {
+    white-space: normal;
+    word-break: break-word;
+    font-size: 0.85rem;
+}
+</style>
+
+<div class="sim-wrap">
+    <div class="sim-card">
+        <h2>Similarity Search</h2>
+        <p>
+            Choose a fixed scouting query and retrieve the most similar player reviews using vector similarity in the database.
+        </p>
+
+        <form method="POST" action="/similarity" style="margin-bottom:20px;">
+            <label for="query_key"><strong>Select query</strong></label><br><br>
+            <select name="query_key" id="query_key" required style="width:60%;padding:8px;">
+                <option value="">-- Choose a query --</option>
+                {% for key, item in query_options.items() %}
+                    <option value="{{ key }}" {% if selected_key == key %}selected{% endif %}>
+                        {{ item.label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button class="btn btn-primary btn-submit-custom" type="submit">Find Similar Reviews</button>
+            <a class="btn btn-secondary btn-submit-custom" href="/">Back</a>
+        </form>
+    </div>
+
+    {% if results %}
+    <div class="sim-card" style="margin-top:20px;">
+        <h3>Top 5 Similar Reviews</h3>
+
+        <table class="sim-table">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Manager</th>
+                    <th>Review</th>
+                    <th>Distance</th>
+                    <th>Vector Preview</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td class="sim-review">{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td class="sim-vector"><code>{{ row[5] }}...</code></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p style="margin-top:15px;">
+            Lower cosine distance means higher similarity.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

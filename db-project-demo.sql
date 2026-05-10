@@ -65,6 +65,25 @@ CREATE TABLE `students` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+-- ----------------------------
+-- Table structure for player_reviews
+-- ----------------------------
+DROP TABLE IF EXISTS player_reviews;
+CREATE TABLE player_reviews (
+  id INT NOT NULL AUTO_INCREMENT,
+  student_id INT NOT NULL,
+  manager_name VARCHAR(100) NOT NULL,
+  archetype VARCHAR(100) NOT NULL,
+  review_text TEXT NOT NULL,
+  embedding VECTOR(384) NULL,
+  PRIMARY KEY (id),
+  KEY student_id (student_id),
+  CONSTRAINT fk_player_reviews_student
+    FOREIGN KEY (student_id) REFERENCES students (id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- ----------------------------
 -- Records of students
 -- ----------------------------

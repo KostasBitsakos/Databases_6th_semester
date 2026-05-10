@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: demo_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_USER: demo_user
+      MYSQL_PASSWORD: demo_pass
+      MYSQL_ROOT_PASSWORD: root_pass_123
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db-project-demo.sql:/docker-entrypoint-initdb.d/db-project-demo.sql:ro
+      - ./zzz-grants.sql:/docker-entrypoint-initdb.d/zzz-grants.sql:ro
+    command: --default-authentication-plugin=mysql_native_password
+
+  app:
+    build: .
+    container_name: demo_flask
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DB: demo
+      MYSQL_USER: demo_user
+      MYSQL_PASSWORD: demo_pass
+      SECRET_KEY: dev_secret_key
+      WTF_CSRF_SECRET_KEY: dev_csrf_secret_key
+    ports:
+      - "3000:3000"
+    command: python run.py
+
+volumes:
+  db_data:
