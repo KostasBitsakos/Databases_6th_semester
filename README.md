@@ -1,92 +1,470 @@
 # Databases-Python-Demo
 
-Adapted from [Databases-Java-Demo](https://github.com/ChristosHadjichristofi/Databases-Java-Demo) and [Databases-NodeJS-Demo](https://github.com/ChristosHadjichristofi/Databases-NodeJS-Demo), originally by [Christos Hadjichristofi](https://github.com/ChristosHadjichristofi).
+Adapted from the original [Databases-Python-Demo](https://github.com/DimK19/Databases-Python-Demo).
 
-Implementation in PHP [here](https://github.com/cpefkianakis/Databases-PHP-Demo).
+This repository contains a **Python / Flask** web application demo for the Databases laboratory course, extended with:
+
+- Dockerized execution
+- MariaDB 11.8
+- additional player review data
+- stored vector embeddings
+- similarity search functionality on reviews
+
+---
 
 ## Dependencies
 
- - [MySQL](https://www.mysql.com/) for Windows
- - [Python](https://www.python.org/downloads/), with the additional libraries:
-    - [Flask](https://flask.palletsprojects.com/en/2.0.x/)
-    - [Flask-MySQLdb](https://flask-mysqldb.readthedocs.io/en/latest/)
-    - [faker](https://faker.readthedocs.io/en/master/) (for data generation)
-    - [Flask-WTForms](https://flask-wtf.readthedocs.io/en/1.0.x/) and [email-validator](https://pypi.org/project/email-validator/) (a more involved method of input validation)
+To run the project, you need:
 
-Use `pip3 install <package_name>` to install each individual Python package (library) directly for the entire system, or create a virtual environment with the [`venv`](https://docs.python.org/3/library/venv.html) module. The necessary packages for this app are listed in `requirements.txt` and can be installed all together via `pip install -r requirements.txt`.
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
 
-## What does Flask do
+The application uses the following Python libraries:
 
-Flask is a micro web framework used to create web applications. It uses [Jinja](https://jinja.palletsprojects.com/en/3.0.x/) as its templating engine, to generate static template files at runtime, and [Werkzeug](https://www.palletsprojects.com/p/werkzeug/) as its WSGI toolkit, to facilitate the communication between web server and application. When writing an app locally, Flask will launch a simple "development" server on which to run it.
+- Flask
+- Flask-MySQLdb
+- Flask-WTF
+- faker
+- email-validator
+- mysqlclient
+- numpy
+- sentence-transformers
 
-## How to Execute SQL Queries with Python and Flask
+All required Python packages are listed in `requirements.txt`.
 
-In order to send queries to a database from a Python program, a connection between it and the databases' server must be established first. That is accomplished by a cursor object from the `Flask-MySQLdb` library, and using the appropriate methods (`execute`, `commit`).
+---
 
-## Flask-WTForms
+## What does Flask do?
 
-This package integrates the [WTForms](https://wtforms.readthedocs.io/en/3.0.x/) library with Flask. WTForms is used for secure input (form) validation and form rendering inside the templates. It provides security features such as [CSRF protection](https://en.wikipedia.org/wiki/Cross-site_request_forgery). Each field of a `FlaskForm` class is essentially rendered as the corresponding input tag in HTML.
+Flask is a Python web framework used to create web applications.
+
+In this project, Flask is responsible for:
+
+- defining routes / endpoints
+- receiving HTTP requests
+- executing Python logic
+- communicating with the MariaDB database
+- rendering HTML templates with dynamic data
+
+This project uses **raw SQL queries** through Python and Flask.
+
+---
 
 ## Project Structure
 
-Generally, Flask allows some freedom of choice regarding the layout of the application's components. This demo follows the structure recommended by the [official documentation](https://flask.palletsprojects.com/en/2.0.x/tutorial/layout/), whereby a package, arbitrarily named "`dbdemo`", contains the application's code and files, separated into folders for each category (models, controllers, HTML templates - views, static files such as css or images).
+Main files and folders:
 
-Additionally, it utilizes Blueprints, a Flask structure that divides the app into sub-modules. Each of those is supposed to represent an entity of the database, and contains its own __init__ file, and corresponding form and route declarations.
+- `dbdemo/`  
+  Main Flask package.
 
- - `__init__.py` configures the application, including the necessary information and credentials for the database
- - Each module folder contains:
-    - an `__init__` file that initializes the Blueprint
-    - a `routes.py` file with the relevant endpoints and corresponding controllers
- - `run.py` launches the simple, built-in server and runs the app on it
- - all HTML templates are stored together in the `templates` folder, but could also be separated per Blueprint
+- `dbdemo/__init__.py`  
+  Initializes the Flask application, database connection, and Blueprints.
 
-Run via the `flask run` command (set the environment variable `FLASK_APP` to `run.py`) or directly with `run.py`.
+- `dbdemo/routes.py`  
+  Contains the main routes, including review and similarity search routes.
 
-_The demo's toy database is created and populated by_ `db-project-demo.sql`.
+- `dbdemo/student/`  
+  Student-related Blueprint, forms, and routes.
 
-## Good Practices
+- `dbdemo/grade/`  
+  Grade-related Blueprint, forms, and routes.
 
- 1. Never upload passwords or API keys to github. One simple way to secure your passwords is to store them in a separate file, that will be included in `.gitignore`:
+- `dbdemo/templates/`  
+  HTML templates rendered by Flask.
 
-    _dbdemo/config.json_
-    ```json
-    {
-        "MYSQL_USER": "dbuser",
-        "MYSQL_PASSWORD": "dbpass",
-        "MYSQL_DB": "dbname",
-        "MYSQL_HOST": "localhost",
-        "SECRET_KEY": "key",
-        "WTF_CSRF_SECRET_KEY": "key"
-    }
-    ```
-    Import the credentials in `__init__.py` by replacing the `app.config` commands with:
-    ```python
-    import json
-    ## ...
-    app.config.from_file("config.json", load = json.load)
-    ```
-    
-## Note for Linux users
+- `run.py`  
+  Starts the Flask application.
 
-Applications that run without `sudo` privileges often are not allowed to connect to MySQL with the _root_ user. In order to overcome this problem, you should create a new MySQL user an grant him privileges for this demo application. Follow these steps:
+- `db-project-demo.sql`  
+  SQL file used to create and initialize the database.
 
-1. Open a terminal and precede the `mysql` command with `sudo` to invoke it with the privileges of the root Ubuntu user in order to gain access to the root MySQL user. This can be done using  
-`sudo mysql -u root -p`.
-2. Create a new MySQL user using:  
-`mysql> CREATE USER 'type_username'@'localhost' IDENTIFIED BY 'type_your_password_here_123';`
-3. Grant the user root privileges on the application's database using:  
-`mysql> GRANT ALL PRIVILEGES ON demo.* TO 'type_username'@'localhost' WITH GRANT OPTION;`
-4. Reload the grant tables to ensure that the new privileges are put into effect using:
-`FLUSH PRIVILEGES;`.
-5. Exit MySQL with `mysql> exit;`.
-7. Go to `dbdemo/__init__.py` and change the `app.config["MYSQL_USER"]` and `app.config["MYSQL_PASSWORD"]` lines according to the username and the password you chose before.
+- `seed_reviews.py`  
+  Generates additional students and player-style review data.
 
-For more details read [this](https://www.digitalocean.com/community/tutorials/how-to-create-a-new-user-and-grant-permissions-in-mysql).
-    
-## Screenshots
+- `populate_embeddings.py`  
+  Populates vector embeddings for the reviews.
 
-![landing](https://user-images.githubusercontent.com/40044042/156389573-9e6c1c3a-1488-4e39-913f-96dd11091adb.png)
+- `Dockerfile`  
+  Defines the Flask application container.
 
-![students](https://user-images.githubusercontent.com/40044042/156389596-a409b129-e9cb-4946-9d9d-47f113c1d8f3.png)
+- `docker-compose.yml`  
+  Defines the Flask and MariaDB services.
 
-![grades](https://user-images.githubusercontent.com/40044042/156389628-1653aba7-c033-48d0-ac3a-df37374f0d1e.png)
+- `zzz-grants.sql`  
+  Grants privileges to the configured MariaDB user.
+
+---
+
+## Database Schema
+
+The original demo contains two main tables:
+
+- `students`
+- `grades`
+
+The relation is:
+
+- each student has a unique `id`
+- each grade belongs to a student through `student_id`
+- one student can have many grades
+
+The extended version also includes:
+
+- `player_reviews`
+
+The `player_reviews` table stores:
+
+- the related student
+- the manager name
+- the player archetype
+- the review text
+- the review vector embedding
+
+This allows the application to combine relational data, text data, and vector similarity search.
+
+---
+
+## Dockerized Execution
+
+The project runs with Docker Compose.
+
+The `docker-compose.yml` file defines two services:
+
+- `app`  
+  Runs the Flask application.
+
+- `db`  
+  Runs the MariaDB 11.8 database.
+
+The application is available at:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## How to Run the Project
+
+Follow these steps from a terminal.
+
+### Step 1: Clone the repository
+
+```bash
+git clone https://github.com/KostasBitsakos/Databases_6th_semester.git
+cd Databases_6th_semester
+```
+
+### Step 2: Build and start the containers
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
+This will:
+
+- build the Flask application container
+- start the MariaDB database container
+- initialize the database
+- start the web application
+
+### Step 3: Wait for the database to initialize
+
+Wait a few seconds after starting the containers.
+
+The database is initialized automatically using:
+
+- `db-project-demo.sql`
+- `zzz-grants.sql`
+
+These files are executed automatically by MariaDB when the database volume is created for the first time.
+
+### Step 4: Populate the review data
+
+```bash
+docker compose exec app python seed_reviews.py
+```
+
+This script creates:
+
+- additional dummy students
+- player review texts
+- manager names
+- player archetypes
+
+### Step 5: Populate the vector embeddings
+
+```bash
+docker compose exec app python populate_embeddings.py
+```
+
+This script fills the `embedding` column of the `player_reviews` table.
+
+The embeddings are used for similarity search.
+
+### Step 6: Open the application
+
+Open your browser at:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## Available Pages
+
+After running the project, you can visit:
+
+```text
+/
+```
+
+```text
+/students
+```
+
+```text
+/grades
+```
+
+```text
+/reviews
+```
+
+```text
+/similarity
+```
+
+The application includes:
+
+- a landing page
+- a students page
+- a grades page
+- a reviews page
+- a similarity search page
+
+---
+
+## Similarity Search
+
+The extended version supports similarity search on player reviews.
+
+Each review is stored:
+
+- as normal text
+- as a vector embedding
+
+The text is used for reading and display.
+
+The vector is used for comparing reviews.
+
+Similarity search is computed inside **MariaDB**, using vector functions such as:
+
+```sql
+VEC_FromText(...)
+```
+
+```sql
+VEC_ToText(...)
+```
+
+```sql
+VEC_DISTANCE_COSINE(...)
+```
+
+General flow:
+
+1. The user selects a query from the web page.
+2. Flask receives the request.
+3. Flask sends a SQL query to MariaDB.
+4. MariaDB compares the vectors.
+5. The closest reviews are returned.
+6. Flask displays the results.
+
+---
+
+## Types of Similarity Search
+
+### 1. Fixed-query similarity search
+
+The user selects a predefined player profile, such as:
+
+- pacey winger
+- creative playmaker
+- target striker
+- ball-winning midfielder
+- ball-playing centre-back
+- sweeper keeper
+
+The selected profile is converted into a vector and compared with the stored review embeddings.
+
+### 2. Review-to-review similarity search
+
+The user selects an existing review.
+
+The application returns the most similar reviews based on the stored embeddings.
+
+This demonstrates how vector similarity can be used to find related database records.
+
+---
+
+## Reset and Rebuild from Scratch
+
+To completely reset the project, run:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+docker compose exec app python seed_reviews.py
+docker compose exec app python populate_embeddings.py
+```
+
+This will:
+
+- stop the containers
+- delete the old database volume
+- rebuild the application
+- recreate the database
+- insert the review data again
+- populate the embeddings again
+
+Use this when you want a clean start.
+
+---
+
+## Useful Docker Commands
+
+Start the project:
+
+```bash
+docker compose up -d
+```
+
+Stop the project:
+
+```bash
+docker compose down
+```
+
+Stop the project and delete the database volume:
+
+```bash
+docker compose down -v
+```
+
+Rebuild the project:
+
+```bash
+docker compose up -d --build
+```
+
+View all logs:
+
+```bash
+docker compose logs -f
+```
+
+View only Flask app logs:
+
+```bash
+docker compose logs -f app
+```
+
+View only database logs:
+
+```bash
+docker compose logs -f db
+```
+
+Check running containers:
+
+```bash
+docker compose ps
+```
+
+---
+
+## Basic Troubleshooting
+
+### The application does not open
+
+Check that the containers are running:
+
+```bash
+docker compose ps
+```
+
+If needed, restart the project:
+
+```bash
+docker compose up -d --build
+```
+
+### The database seems empty
+
+Run again:
+
+```bash
+docker compose exec app python seed_reviews.py
+docker compose exec app python populate_embeddings.py
+```
+
+Then refresh the browser.
+
+### Changes in the SQL file do not appear
+
+MariaDB runs the initialization SQL files only when the database volume is empty.
+
+To force re-initialization, run:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+docker compose exec app python seed_reviews.py
+docker compose exec app python populate_embeddings.py
+```
+
+### Similarity search returns no results
+
+Make sure the review data and embeddings have been created:
+
+```bash
+docker compose exec app python seed_reviews.py
+docker compose exec app python populate_embeddings.py
+```
+
+---
+
+## Educational Focus
+
+This demo helps students understand:
+
+- Flask routes
+- HTML templates with Jinja
+- raw SQL queries from Python
+- relational database tables
+- primary keys and foreign keys
+- Dockerized application execution
+- MariaDB database initialization
+- vector storage
+- similarity search with vectors
+
+The goal is to show how a simple relational database web application can be extended with vector-based search functionality.
+
+---
+
+## Acknowledgment
+
+This project started from the original [Databases-Python-Demo](https://github.com/DimK19/Databases-Python-Demo).
+
+It was extended with:
+
+- Docker support
+- MariaDB 11.8
+- additional review generation
+- stored vector embeddings
+- similarity search functionality
+
+The project is intended for educational use in the Databases laboratory course.
