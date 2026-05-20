@@ -437,23 +437,6 @@ docker compose exec app python populate_embeddings.py
 
 ---
 
-## Educational Focus
-
-This demo helps students understand:
-
-- Flask routes
-- HTML templates with Jinja
-- raw SQL queries from Python
-- relational database tables
-- primary keys and foreign keys
-- Dockerized application execution
-- MariaDB database initialization
-- vector storage
-- similarity search with vectors
-
-The goal is to show how a simple relational database web application can be extended with vector-based search functionality.
-
----
 
 ## Acknowledgment
 
